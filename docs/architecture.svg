@@ -1,0 +1,79 @@
+<svg width="680" height="360" viewBox="0 0 680 360" xmlns="http://www.w3.org/2000/svg" role="img">
+<title>Arquitetura do JurisAO</title>
+<desc>Pipeline offline (PDFs, loader, chunker, indexer, vector store persistido) e pipeline online (pergunta, endpoint FastAPI, agente de retrieval e LLM, resposta com citações)</desc>
+<defs>
+<marker id="arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M2 1L8 5L2 9" fill="none" stroke="#5f5e5a" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></marker>
+</defs>
+<rect width="680" height="360" fill="#ffffff"/>
+<text x="50" y="40" font-family="sans-serif" font-size="12" fill="#5f5e5a">Offline — corre uma vez, localmente</text>
+
+<g>
+<rect x="50" y="60" width="130" height="56" rx="8" fill="#e1f5ee" stroke="#0f6e56" stroke-width="0.5"/>
+<text x="115" y="78" text-anchor="middle" dominant-baseline="central" font-family="sans-serif" font-size="14" font-weight="500" fill="#085041">PDFs</text>
+<text x="115" y="96" text-anchor="middle" dominant-baseline="central" font-family="sans-serif" font-size="12" fill="#0f6e56">Dados brutos</text>
+</g>
+
+<g>
+<rect x="200" y="60" width="130" height="56" rx="8" fill="#eeedfe" stroke="#534ab7" stroke-width="0.5"/>
+<text x="265" y="78" text-anchor="middle" dominant-baseline="central" font-family="sans-serif" font-size="14" font-weight="500" fill="#3c3489">Loader</text>
+<text x="265" y="96" text-anchor="middle" dominant-baseline="central" font-family="sans-serif" font-size="12" fill="#534ab7">Extrai texto</text>
+</g>
+
+<g>
+<rect x="350" y="60" width="130" height="56" rx="8" fill="#eeedfe" stroke="#534ab7" stroke-width="0.5"/>
+<text x="415" y="78" text-anchor="middle" dominant-baseline="central" font-family="sans-serif" font-size="14" font-weight="500" fill="#3c3489">Chunker</text>
+<text x="415" y="96" text-anchor="middle" dominant-baseline="central" font-family="sans-serif" font-size="12" fill="#534ab7">Divide artigos</text>
+</g>
+
+<g>
+<rect x="500" y="60" width="130" height="56" rx="8" fill="#eeedfe" stroke="#534ab7" stroke-width="0.5"/>
+<text x="565" y="78" text-anchor="middle" dominant-baseline="central" font-family="sans-serif" font-size="14" font-weight="500" fill="#3c3489">Indexer</text>
+<text x="565" y="96" text-anchor="middle" dominant-baseline="central" font-family="sans-serif" font-size="12" fill="#534ab7">Embeddings</text>
+</g>
+
+<line x1="180" y1="88" x2="200" y2="88" stroke="#5f5e5a" stroke-width="0.5" marker-end="url(#arrow)"/>
+<line x1="330" y1="88" x2="350" y2="88" stroke="#5f5e5a" stroke-width="0.5" marker-end="url(#arrow)"/>
+<line x1="480" y1="88" x2="500" y2="88" stroke="#5f5e5a" stroke-width="0.5" marker-end="url(#arrow)"/>
+
+<path d="M565 116 L565 133 L340 133 L340 150" fill="none" stroke="#5f5e5a" stroke-width="0.5" marker-end="url(#arrow)"/>
+
+<g>
+<rect x="240" y="150" width="200" height="56" rx="8" fill="#e1f5ee" stroke="#0f6e56" stroke-width="0.5"/>
+<text x="340" y="168" text-anchor="middle" dominant-baseline="central" font-family="sans-serif" font-size="14" font-weight="500" fill="#085041">vector_store.json</text>
+<text x="340" y="186" text-anchor="middle" dominant-baseline="central" font-family="sans-serif" font-size="12" fill="#0f6e56">Índice persistido</text>
+</g>
+
+<path d="M340 206 L340 230 L415 230 L415 260" fill="none" stroke="#5f5e5a" stroke-width="0.5" stroke-dasharray="4 4" marker-end="url(#arrow)"/>
+
+<text x="50" y="240" font-family="sans-serif" font-size="12" fill="#5f5e5a">Online — corre a cada pergunta</text>
+
+<g>
+<rect x="50" y="260" width="130" height="56" rx="8" fill="#e1f5ee" stroke="#0f6e56" stroke-width="0.5"/>
+<text x="115" y="278" text-anchor="middle" dominant-baseline="central" font-family="sans-serif" font-size="14" font-weight="500" fill="#085041">Pergunta</text>
+<text x="115" y="296" text-anchor="middle" dominant-baseline="central" font-family="sans-serif" font-size="12" fill="#0f6e56">Do utilizador</text>
+</g>
+
+<g>
+<rect x="200" y="260" width="130" height="56" rx="8" fill="#eeedfe" stroke="#534ab7" stroke-width="0.5"/>
+<text x="265" y="278" text-anchor="middle" dominant-baseline="central" font-family="sans-serif" font-size="14" font-weight="500" fill="#3c3489">/ask</text>
+<text x="265" y="296" text-anchor="middle" dominant-baseline="central" font-family="sans-serif" font-size="12" fill="#534ab7">Endpoint API</text>
+</g>
+
+<g>
+<rect x="350" y="260" width="130" height="56" rx="8" fill="#eeedfe" stroke="#534ab7" stroke-width="0.5"/>
+<text x="415" y="278" text-anchor="middle" dominant-baseline="central" font-family="sans-serif" font-size="14" font-weight="500" fill="#3c3489">Agente</text>
+<text x="415" y="296" text-anchor="middle" dominant-baseline="central" font-family="sans-serif" font-size="12" fill="#534ab7">Busca + LLM</text>
+</g>
+
+<g>
+<rect x="500" y="260" width="130" height="56" rx="8" fill="#e1f5ee" stroke="#0f6e56" stroke-width="0.5"/>
+<text x="565" y="278" text-anchor="middle" dominant-baseline="central" font-family="sans-serif" font-size="14" font-weight="500" fill="#085041">Resposta</text>
+<text x="565" y="296" text-anchor="middle" dominant-baseline="central" font-family="sans-serif" font-size="12" fill="#0f6e56">+ citações</text>
+</g>
+
+<line x1="180" y1="288" x2="200" y2="288" stroke="#5f5e5a" stroke-width="0.5" marker-end="url(#arrow)"/>
+<line x1="330" y1="288" x2="350" y2="288" stroke="#5f5e5a" stroke-width="0.5" marker-end="url(#arrow)"/>
+<line x1="480" y1="288" x2="500" y2="288" stroke="#5f5e5a" stroke-width="0.5" marker-end="url(#arrow)"/>
+
+<text x="50" y="336" font-family="sans-serif" font-size="12" fill="#5f5e5a">Teal = dados / artefactos · Purple = processamento</text>
+</svg>
