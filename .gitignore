@@ -2,6 +2,5 @@ venv/
 .venv/
 __pycache__/
 .env
-vectorstore/
 test/
 *.pyc
