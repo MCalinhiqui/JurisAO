@@ -67,7 +67,7 @@ O projeto está dividido em duas fases claramente separadas:
 | Linguagem | Python 3.12+ |
 | Orquestração LLM | LangChain |
 | Extração de PDF | `langchain_community.PyPDFLoader` (pypdf) |
-| Modelo de linguagem | Google Gemini (`gemini-2.5-flash`) via `langchain-google-genai` |
+| Modelo de linguagem | Google Gemini (`gemini-3.5-flash`) via `langchain-google-genai` |
 | Embeddings | `sentence-transformers/paraphrase-multilingual-mpnet-base-v2` via `langchain-huggingface` |
 | Vector store | `InMemoryVectorStore` (langchain-core), com persistência em disco |
 | API | FastAPI + Uvicorn |
