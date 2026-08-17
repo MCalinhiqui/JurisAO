@@ -24,7 +24,9 @@ Projeto desenvolvido no âmbito do **Challenge Alura Agente**, programa **Oracle
 
 ## Visão geral
 
-Muitos cidadãos recorrem a ferramentas de IA generalistas para perguntar sobre a lei, mas essas ferramentas não têm acesso direto ao texto legal angolano e podem alucinar respostas. O **JurisAO** resolve isto com uma arquitetura RAG (Retrieval-Augmented Generation): o agente só responde com base em artigos reais, recuperados por busca semântica nos documentos legais fornecidos, e cita sempre a fonte exata.
+A legislação angolana é pública, mas continua distante de quem mais precisa dela. Muitos angolanos recorrem a ferramentas de IA generalistas, como o ChatGPT, para perguntar sobre os seus direitos e deveres perante a lei — sem saber que essas ferramentas não têm acesso direto ao texto legal angolano, e podem simplesmente inventar respostas com total confiança. Do outro lado, quem tenta ler a lei diretamente esbarra noutro obstáculo: artigos escritos em linguagem técnica, difíceis de interpretar sem formação jurídica, dentro de documentos tão extensos que percorrê-los à procura de uma resposta concreta é, por si só, uma tarefa desanimadora.
+
+O JurisAO nasce para preencher esse espaço: um agente de IA que só responde com base no texto real da lei angolana — nunca por adivinhação — e que cita sempre o artigo exato de onde a informação vem, para que a resposta possa ser verificada, não apenas confiada.
 
 Funcionalidades principais:
 
@@ -67,10 +69,11 @@ O projeto está dividido em duas fases claramente separadas:
 | Linguagem | Python 3.12+ |
 | Orquestração LLM | LangChain |
 | Extração de PDF | `langchain_community.PyPDFLoader` (pypdf) |
-| Modelo de linguagem | Google Gemini (`gemini-3.5-flash`) via `langchain-google-genai` |
+| Modelo de linguagem | Google Gemini (`gemini-2.5-flash`) via `langchain-google-genai` |
 | Embeddings | `sentence-transformers/paraphrase-multilingual-mpnet-base-v2` via `langchain-huggingface` |
 | Vector store | `InMemoryVectorStore` (langchain-core), com persistência em disco |
 | API | FastAPI + Uvicorn |
+| Frontend | HTML + CSS + JavaScript puro, servido como ficheiro estático pela própria FastAPI |
 | Validação de dados | Pydantic |
 | Gestão de segredos | python-dotenv |
 
@@ -81,24 +84,30 @@ O projeto está dividido em duas fases claramente separadas:
 ```
 jurisao/
 ├── data/
-│   ├── raw/                # PDFs originais (Constituição, Código Penal)
-│   └── processed/          # vector_store.json (índice já processado)
+│   ├── raw/                        # PDFs originais (Constituição, Código Penal)
+│   └── processed/
+│       └── vector_store.json       # índice já processado e persistido
 ├── docs/
 │   └── architecture.svg
 ├── src/
+│   ├── config.py                   # carrega variáveis de ambiente (API key)
 │   ├── ingestion/
-│   │   ├── loader.py       # carrega PDFs
-│   │   ├── chunker.py      # divide por artigo, deteta hierarquia e lei
-│   │   ├── constants.py    # padrões de hierarquia, ruído de página, etc.
-│   │   └── indexer.py      # gera embeddings e vector store
+│   │   ├── loader.py               # carrega PDFs
+│   │   ├── chunker.py              # divide por artigo, deteta hierarquia e lei
+│   │   └── indexer.py              # gera embeddings e o vector store
+│   ├── util/
+│   │   ├── constants.py            # padrões de hierarquia, ruído de página, etc.
+│   │   └── doc_standardization.py  # deteção de cabeçalhos, mudança de lei
 │   ├── agent/
-│   │   ├── retriever.py    # carrega o vector store e faz busca por similaridade
-│   │   ├── prompts.py      # prompt do sistema e construção de contexto
-│   │   └── chain.py        # junta retrieval + reescrita de pergunta + LLM
+│   │   ├── retriever.py            # carrega o vector store e faz busca por similaridade
+│   │   ├── prompts.py              # prompt do sistema e construção de contexto
+│   │   └── chain.py                # junta retrieval híbrido + reescrita de pergunta + LLM
 │   └── api/
-│       ├── main.py         # entrypoint FastAPI
-│       ├── routes.py       # endpoints /ask e /health
-│       └── schemas.py      # modelos Pydantic de request/response
+│       ├── main.py                 # entrypoint FastAPI (serve API + frontend estático)
+│       ├── routes.py               # endpoints /ask e /health
+│       └── schemas.py              # modelos Pydantic de request/response
+├── static/
+│   └── index.html                  # interface web (HTML/CSS/JS puro)
 ├── .env.example
 ├── .gitignore
 ├── requirements.txt
@@ -144,7 +153,7 @@ Isto processa os PDFs em `data/raw/` e grava `data/processed/vector_store.json`.
 uvicorn src.api.main:app --reload
 ```
 
-Acede a `http://127.0.0.1:8000/docs` para a documentação interativa (Swagger), onde podes testar o endpoint `/ask` diretamente.
+Acede a `http://127.0.0.1:8000/` para a interface web, ou a `http://127.0.0.1:8000/docs` para a documentação interativa da API (Swagger), onde também podes testar o endpoint `/ask` diretamente.
 
 ---
 
@@ -187,7 +196,8 @@ curl -X POST http://127.0.0.1:8000/ask \
 - **Documentos adicionais**: Lei Geral do Trabalho, Lei de Proteção de Dados Pessoais e outras leis angolanas ainda não estão integradas — ficam como próximo passo natural, dado que o pipeline de ingestão já é genérico o suficiente para as suportar.
 - **Anexos da Constituição** (Bandeira, Insígnia, Hino Nacional) não são indexados, por não seguirem a estrutura "por artigo" e terem baixa relevância para perguntas jurídicas típicas.
 - **Texto residual em 4 artigos**: os últimos artigos de cada um dos quatro textos legais fundidos no PDF do Código Penal podem conter, colado ao fim, o bloco de assinaturas de promulgação do documento original.
-- **Qualidade da recuperação depende do parâmetro `k`** e da proximidade semântica entre a pergunta e o vocabulário legal — mitigado com reescrita automática da pergunta, mas não eliminado por completo.
+- **Qualidade da recuperação em artigos vizinhos**: a busca combina a pergunta original com uma versão reescrita em termos jurídicos formais (busca híbrida), o que melhora significativamente a recuperação. Ainda assim, em secções com muitos artigos relacionados (ex: vários artigos seguidos sobre o mesmo crime), o artigo exato mais relevante pode nem sempre estar entre os `k` primeiros resultados — nesses casos, o agente responde honestamente que não encontrou a informação, em vez de inventar.
+- **Memória de conversa**: cada pergunta é processada de forma independente; o agente não mantém histórico da conversa. Fica como próximo passo (exigiria gerir estado de sessão no `chain.py` e na interface).
 - **Script de inspeção de novos documentos** (deteção automática de ruído de publicação para novas fontes) está planeado mas ainda não implementado como ferramenta reutilizável.
 - Número da página de origem ainda não está incluído na metadata dos chunks (ficou para uma iteração futura).
 
