@@ -22,5 +22,6 @@ def create_index(all_articles: list):
     vector_store = InMemoryVectorStore.from_documents(all_articles,embed_model)
     return vector_store
 
-
-    
+articles = join_pages("data/raw")
+vector_store = create_index(articles)
+vector_store.dump("data/processed/vector_store.json")
