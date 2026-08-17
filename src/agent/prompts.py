@@ -24,7 +24,11 @@ Artigos relevantes encontrados:
 Pergunta do utilizador: {question}
 """
 
-QUERY_REWRITE_PROMPT = """Reescreva a pergunta abaixo utilizando terminologia jurídica formal e precisa, tal como apareceria em textos legais angolanos. Não responda à pergunta, apenas reformule-a. Devolva apenas a pergunta reformulada, sem explicações adicionais.
+QUERY_REWRITE_PROMPT = """Reescreva a pergunta abaixo utilizando terminologia jurídica formal e precisa, tal como apareceria em textos legais angolanos.
+
+Regra importante: se a pergunta já contiver um termo jurídico específico (ex: nomes de crimes, institutos legais), mantenha esse termo exatamente como está — não o substitua por um sinónimo, mesmo que pareça mais formal. Só reformule a estrutura da frase e remova linguagem coloquial ou pessoal em torno do termo.
+
+Não responda à pergunta, apenas reformule-a. Devolva apenas a pergunta reformulada, sem explicações adicionais.
 
 Pergunta original: {question}
 

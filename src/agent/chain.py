@@ -39,7 +39,18 @@ def extract_text(content) -> str:
 def ask(question: str, k: int = 4) -> dict:
     vector_store = get_vector_store()
     search_query = rewrite_query(question)
-    articles = retrieve_articles(vector_store, search_query, k=k)
+
+    articles_rewritten = retrieve_articles(vector_store, search_query, k=k)
+    articles_original = retrieve_articles(vector_store, question, k=k)
+
+    seen = set()
+    articles = []
+    for a in articles_rewritten + articles_original:
+        chave = (a.metadata.get("LEI"), a.metadata.get("artigo"))
+        if chave not in seen:
+            seen.add(chave)
+            articles.append(a)
+    articles = articles[:k]
 
     context = build_context(articles)
     prompt = SYSTEM_PROMPT.format(context=context, question=question)
