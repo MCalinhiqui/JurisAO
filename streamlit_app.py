@@ -144,6 +144,14 @@ def show_about():
 
 Um agente de Inteligência Artificial que responde a perguntas sobre legislação angolana, com base exclusivamente em documentos legais reais — nunca por adivinhação. Cada resposta inclui a lei e o artigo exato de onde a informação foi retirada.
 
+**Porque existe o JurisAO**
+
+A legislação angolana é pública — mas pública não é o mesmo que acessível. Os documentos legais são extensos, escritos em linguagem técnica, e organizados numa estrutura (livros, títulos, capítulos, secções, artigos) que exige tempo e conhecimento jurídico para navegar. Para a maioria das pessoas, encontrar uma resposta concreta dentro de centenas de páginas é, na prática, tão difícil como se a lei não estivesse disponível.
+
+Por isso, muitos recorrem a ferramentas de IA generalistas para perguntar sobre os seus direitos e deveres. O problema: essas ferramentas não têm acesso ao texto legal angolano real, e podem responder com total confiança mesmo quando estão a inventar — sem citar nenhum artigo, sem forma de verificar se a resposta é verdadeira.
+
+O JurisAO nasce para preencher esse espaço: transformar a lei pública em conhecimento verdadeiramente acessível — sem inventar respostas, e sem esconder de onde vêm.
+
 **Como usar**
 
 Escreve a tua pergunta em português corrente, como falarias com uma pessoa (ex: *"quais são os direitos da criança?"*). Não precisas de usar termos jurídicos — o agente entende linguagem natural.
