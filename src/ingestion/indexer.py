@@ -18,10 +18,11 @@ def join_pages(path: str) -> list:
 from langchain_huggingface import HuggingFaceEmbeddings
 from langchain_core.vectorstores import InMemoryVectorStore
 def create_index(all_articles: list):
-    embed_model = HuggingFaceEmbeddings(model_name="sentence-transformers/paraphrase-multilingual-mpnet-base-v2",model_kwargs={"local_files_only":True})
+    embed_model = HuggingFaceEmbeddings(model_name="sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2", model_kwargs={"local_files_only":True})
     vector_store = InMemoryVectorStore.from_documents(all_articles,embed_model)
     return vector_store
 
-articles = join_pages("data/raw")
-vector_store = create_index(articles)
-vector_store.dump("data/processed/vector_store.json")
+if __name__ == "__main__":
+    articles = join_pages("data/raw")
+    vector_store = create_index(articles)
+    vector_store.dump("data/processed/vector_store.json")

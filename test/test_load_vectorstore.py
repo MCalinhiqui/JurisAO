@@ -7,7 +7,7 @@ from langchain_huggingface import HuggingFaceEmbeddings
 import time
 
 inicio = time.time()
-embed_model = HuggingFaceEmbeddings(model_name="sentence-transformers/paraphrase-multilingual-mpnet-base-v2",model_kwargs={"local_files_only":True})
+embed_model = HuggingFaceEmbeddings(model_name="sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2",model_kwargs={"local_files_only":True})
 
 vector_store = InMemoryVectorStore.load("data/processed/vector_store.json", embed_model)
 print(f"Tempo a carregar: {time.time() - inicio:.2f} segundos")

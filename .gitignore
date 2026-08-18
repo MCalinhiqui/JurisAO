@@ -2,5 +2,5 @@ venv/
 .venv/
 __pycache__/
 .env
-test/
+test/*.py
 *.pyc
