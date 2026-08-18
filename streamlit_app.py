@@ -137,6 +137,32 @@ with st.popover("Ver legislações disponíveis"):
     - Código do Processo Penal Angolano
     """)
 
+@st.dialog("Sobre o JurisAO")
+def show_about():
+    st.markdown("""
+**O que é o JurisAO?**
+
+Um agente de Inteligência Artificial que responde a perguntas sobre legislação angolana, com base exclusivamente em documentos legais reais — nunca por adivinhação. Cada resposta inclui a lei e o artigo exato de onde a informação foi retirada.
+
+**Como usar**
+
+Escreve a tua pergunta em português corrente, como falarias com uma pessoa (ex: *"quais são os direitos da criança?"*). Não precisas de usar termos jurídicos — o agente entende linguagem natural.
+
+**O que está disponível atualmente**
+- Constituição da República de Angola
+- Código Penal Angolano
+- Código do Processo Penal Angolano
+
+**Limitações importantes**
+- É um assistente **informativo**, não substitui aconselhamento jurídico profissional
+- Cada pergunta é processada de forma independente (ainda sem memória de conversa)
+- A cobertura legal está a crescer — nem todas as leis angolanas estão disponíveis ainda
+- Pode ocasionalmente não encontrar informação que existe nos documentos, devido a limitações técnicas de busca
+    """)
+    
+if st.button("Sobre a plataforma"):
+    show_about()
+
 st.divider()
 
 # --- Histórico de conversa (apenas visual; cada pergunta é processada de forma independente) ---

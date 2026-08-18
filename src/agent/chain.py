@@ -7,13 +7,21 @@ load_dotenv()
 
 _vector_store = None
 _llm = None
+_rewrite_llm = None
+
+def get_rewrite_llm():
+    global _rewrite_llm
+    if _rewrite_llm is None:
+        _rewrite_llm = ChatGoogleGenerativeAI(model="gemini-3.5-flash", temperature=0)
+    return _rewrite_llm
 
 def rewrite_query(question: str) -> str:
     try:
-        llm = get_llm()
+        llm = get_rewrite_llm()  # <- troca de get_llm() para get_rewrite_llm()
         prompt = QUERY_REWRITE_PROMPT.format(question=question)
         response = llm.invoke(prompt)
-        return extract_text(response.content).strip()
+        reescrita = extract_text(response.content).strip()
+        return reescrita if reescrita else question
     except Exception:
         return question
 

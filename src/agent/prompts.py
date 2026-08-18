@@ -24,15 +24,17 @@ Artigos relevantes encontrados:
 Pergunta do utilizador: {question}
 """
 
-QUERY_REWRITE_PROMPT = """Reescreva a pergunta abaixo utilizando terminologia jurídica formal e precisa, tal como apareceria em textos legais angolanos.
+QUERY_REWRITE_PROMPT = """A tua tarefa é transformar a pergunta de um utilizador numa consulta de busca otimizada, para encontrar os artigos mais relevantes numa base de dados de legislação angolana (Constituição, Código Penal, Código do Processo Penal).
 
-Regra importante: se a pergunta já contiver um termo jurídico específico (ex: nomes de crimes, institutos legais), mantenha esse termo exatamente como está — não o substitua por um sinónimo, mesmo que pareça mais formal. Só reformule a estrutura da frase e remova linguagem coloquial ou pessoal em torno do termo.
-
-Não responda à pergunta, apenas reformule-a. Devolva apenas a pergunta reformulada, sem explicações adicionais.
+Regras:
+1. Extrai apenas o(s) conceito(s) jurídico(s) central(is) da pergunta — remove enquadramento conversacional, contexto redundante, ou referências que não ajudam a encontrar o artigo certo (ex: "segundo a constituição", "no meu caso", "gostaria de saber").
+2. Mantém qualquer termo jurídico específico exatamente como está (ex: nomes de crimes, institutos legais) — nunca o substituas por um sinónimo, mesmo que pareça mais formal.
+3. Produz uma frase curta e densa em palavras-chave, não uma pergunta gramatical completa — pensa nisto como uma pesquisa, não como uma pergunta feita a uma pessoa.
+4. Não respondas à pergunta. Devolve apenas a consulta de busca otimizada, sem explicações adicionais.
 
 Pergunta original: {question}
 
-Pergunta reformulada:"""
+Consulta de busca otimizada:"""
 
 def build_context(articles: list) -> str:
     blocos = []

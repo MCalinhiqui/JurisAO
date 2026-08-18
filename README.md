@@ -63,7 +63,7 @@ O projeto está dividido em duas fases claramente separadas:
 ---
 
 ## Tecnologias utilizadas
-
+ 
 | Categoria | Tecnologia |
 |---|---|
 | Linguagem | Python 3.12+ |
@@ -73,14 +73,15 @@ O projeto está dividido em duas fases claramente separadas:
 | Embeddings | `sentence-transformers/paraphrase-multilingual-mpnet-base-v2` via `langchain-huggingface` |
 | Vector store | `InMemoryVectorStore` (langchain-core), com persistência em disco |
 | API | FastAPI + Uvicorn |
-| Frontend | HTML + CSS + JavaScript puro, servido como ficheiro estático pela própria FastAPI |
+| Frontend (deploy) | Streamlit — interface web publicamente deployada |
+| Frontend (alternativo, uso local) | HTML + CSS + JavaScript puro, servido como ficheiro estático pela FastAPI |
 | Validação de dados | Pydantic |
 | Gestão de segredos | python-dotenv |
-
+ 
 ---
-
+ 
 ## Estrutura do repositório
-
+ 
 ```
 jurisao/
 ├── data/
@@ -107,19 +108,20 @@ jurisao/
 │       ├── routes.py               # endpoints /ask e /health
 │       └── schemas.py              # modelos Pydantic de request/response
 ├── static/
-│   └── index.html                  # interface web (HTML/CSS/JS puro)
+│   └── index.html                  # interface web alternativa (HTML/CSS/JS puro, para uso local com FastAPI)
+├── streamlit_app.py                 # interface deployada publicamente (Streamlit Community Cloud)
 ├── .env.example
 ├── .gitignore
 ├── requirements.txt
 └── README.md
 ```
-
+ 
 ---
-
+ 
 ## Como executar localmente
-
+ 
 ### 1. Clonar o repositório e criar o ambiente virtual
-
+ 
 ```bash
 git clone <url-do-repositorio>
 cd jurisao
@@ -128,71 +130,80 @@ venv\Scripts\activate        # Windows
 source venv/bin/activate     # macOS/Linux
 pip install -r requirements.txt
 ```
-
+ 
 ### 2. Configurar a chave da API
-
+ 
 Cria um ficheiro `.env` na raiz do projeto (usa `.env.example` como modelo):
-
+ 
 ```
 GEMINI_API_KEY=a_tua_chave_do_google_ai_studio
 ```
-
+ 
 Obtém uma chave gratuita em [aistudio.google.com](https://aistudio.google.com).
-
+ 
 ### 3. Gerar o índice (só é preciso uma vez)
-
+ 
 ```bash
 python -m src.ingestion.indexer
 ```
-
+ 
 Isto processa os PDFs em `data/raw/` e grava `data/processed/vector_store.json`. Demora alguns minutos (geração de embeddings em CPU) — só precisa de correr uma vez; execuções seguintes da aplicação carregam o índice já pronto em segundos.
-
-### 4. Correr a API
-
+ 
+### 4. Correr a aplicação
+ 
+**Opção A — Interface Streamlit** (a mesma usada no deploy público):
+```bash
+streamlit run streamlit_app.py
+```
+ 
+**Opção B — API FastAPI + interface HTML própria:**
 ```bash
 uvicorn src.api.main:app --reload
 ```
-
 Acede a `http://127.0.0.1:8000/` para a interface web, ou a `http://127.0.0.1:8000/docs` para a documentação interativa da API (Swagger), onde também podes testar o endpoint `/ask` diretamente.
-
+ 
 ---
-
+ 
 ## Exemplos de utilização
-
+ 
 ### Pergunta
 > "Os jovens gozam de protecção especial para efectivação de quais direitos?"
-
+ 
 ### Resposta
 > De acordo com o Artigo 81.º (Título II, Capítulo III) da Constituição da República de Angola, os jovens gozam de proteção especial para a efetivação dos seus direitos económicos, sociais e culturais, nomeadamente: no ensino, na formação profissional e na cultura; no acesso ao primeiro emprego, no trabalho e na segurança social; no acesso à habitação; na educação física e no desporto; e no aproveitamento dos tempos livres.
-
+ 
 ### Pergunta
 > "Se eu assassinar alguém sem querer qual será a pena?"
-
+ 
 ### Resposta
 > De acordo com o Artigo 152.º (Livro II, Título I, Capítulo I, Secção I) do Código Penal Angolano, quem matar outra pessoa por negligência (quando o ato resulta de falta de cuidado ou imprudência, sem intenção de matar) é punido com pena de prisão até 3 anos. Se a negligência for considerada grosseira (uma forma muito grave de descuido ou irresponsabilidade), a pena de prisão aplicável é de 1 a 5 anos.
 >
 > Nota sobre a sua situação pessoal: como descreveu um caso pessoal e pede orientação, lembro que não posso aplicar a lei ao seu caso específico nem dizer-lhe que ação tomar. O que a lei estabelece em geral está descrito acima; para aconselhamento sobre um caso concreto, deve procurar um advogado.
-
+ 
 ### Via API (curl)
-
+ 
 ```bash
 curl -X POST http://127.0.0.1:8000/ask \
   -H "Content-Type: application/json" \
   -d '{"question": "Quais são os direitos da criança segundo a Constituição?", "k": 4}'
 ```
-
+ 
 ---
-
+ 
 ## Deploy
-
-<!-- Preencher após o deploy na OCI: link público e/ou captura de ecrã -->
-
-**Status:** _(a preencher)_
-
+ 
+A aplicação está publicamente acessível em:
+ 
+**🔗 [https://jurisao.streamlit.app/](https://jurisao.streamlit.app/)**
+ 
+![Captura de ecrã da aplicação em funcionamento](./docs/screenshot.png)
+ 
+> **Nota sobre a plataforma de deploy:** o enunciado do challenge sugere a OCI, mas deixa explícito que "não são obrigações" e que qualquer ferramenta é aceitável desde que a solução funcione. A OCI exige verificação por cartão de crédito, que não foi possível concluir (cartão pré-pago rejeitado pela Oracle). O deploy final foi feito no **Streamlit Community Cloud** (1 GB de RAM, sem cartão), com a interface reconstruída em Streamlit para se integrar nativamente com essa plataforma. A interface HTML/CSS/JS original (`static/index.html`) mantém-se no repositório como demonstração para uso local com a API FastAPI.
+ 
 ---
-
+ 
 ## Limitações conhecidas e próximos passos
-
+ 
 - **Documentos adicionais**: Lei Geral do Trabalho, Lei de Proteção de Dados Pessoais e outras leis angolanas ainda não estão integradas — ficam como próximo passo natural, dado que o pipeline de ingestão já é genérico o suficiente para as suportar.
 - **Anexos da Constituição** (Bandeira, Insígnia, Hino Nacional) não são indexados, por não seguirem a estrutura "por artigo" e terem baixa relevância para perguntas jurídicas típicas.
 - **Texto residual em 4 artigos**: os últimos artigos de cada um dos quatro textos legais fundidos no PDF do Código Penal podem conter, colado ao fim, o bloco de assinaturas de promulgação do documento original.
@@ -200,13 +211,12 @@ curl -X POST http://127.0.0.1:8000/ask \
 - **Memória de conversa**: cada pergunta é processada de forma independente; o agente não mantém histórico da conversa. Fica como próximo passo (exigiria gerir estado de sessão no `chain.py` e na interface).
 - **Script de inspeção de novos documentos** (deteção automática de ruído de publicação para novas fontes) está planeado mas ainda não implementado como ferramenta reutilizável.
 - Número da página de origem ainda não está incluído na metadata dos chunks (ficou para uma iteração futura).
-
 ---
-
+ 
 ## Direitos e licença
-
+ 
 © 2026 Moisés da Costa Calinhiqui. Todos os direitos reservados.
-
+ 
 Este projeto é disponibilizado publicamente para fins de avaliação do Challenge Alura Agente (programa Oracle Next Education — parceria Alura/Oracle). Não é permitida a reprodução, distribuição ou uso comercial sem autorização prévia do autor.
-
+ 
 Os documentos legais utilizados (Constituição da República de Angola, Código Penal Angolano) são atos oficiais do Estado angolano, publicados no Diário da República para distribuição pública.

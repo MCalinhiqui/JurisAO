@@ -2,7 +2,7 @@ from pydantic import BaseModel
 
 class QuestionRequest(BaseModel):
     question: str
-    k: int = 10
+    k: int = 40
 
 class AnswerResponse(BaseModel):
     answer: str

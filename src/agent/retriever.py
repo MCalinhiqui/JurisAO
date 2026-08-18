@@ -8,5 +8,5 @@ def load_vector_store():
     embed_model = HuggingFaceEmbeddings(model_name=EMBEDDING_MODEL)
     return InMemoryVectorStore.load(VECTOR_STORE_PATH, embed_model)
 
-def retrieve_articles(vector_store, question: str, k: int = 4):
+def retrieve_articles(vector_store, question: str, k: int = 40):
     return vector_store.similarity_search(question, k=k)
